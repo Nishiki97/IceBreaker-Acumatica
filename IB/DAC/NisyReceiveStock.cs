@@ -6,6 +6,13 @@ namespace PX.Objects.IB.DAC
 	[PXCacheName("Receive Stock")]
 	public class NisyReceiveStock : IBqlTable
 	{
+		#region Events
+		public class Events : PXEntityEvent<NisyReceiveStock>.Container<Events>
+		{
+			public PXEntityEvent<NisyReceiveStock> SaveDocument;
+		}
+		#endregion
+		
 		#region ReceiveStockID
 		[PXDBIdentity(IsKey = true)]
 		public virtual int? ReceiveStockID { get; set; }

@@ -31,6 +31,11 @@ namespace PX.Objects.IB
 		#endregion
 
 		#region Actions
+		public PXAction<nisyProductionOrder> Release;
+		[PXButton]
+		[PXUIField(DisplayName = "Release")]
+		protected virtual IEnumerable release(PXAdapter adapter) => adapter.Get();
+		
 		public PXAction<NisyProductionOrder> IssueMaterial;
 		[PXButton()]
 		[PXUIField(DisplayName = "Issue Material", Enabled = true)]
@@ -66,6 +71,9 @@ namespace PX.Objects.IB
 					dialogBoxGraph.ReceiveShopOrderDetails.Current.WarehouseID = null;
 					dialogBoxGraph.ReceiveShopOrderDetails.Current.LocationID = null;
 					dialogBoxGraph.ReceiveShopOrderDetails.UpdateCurrent();
+					
+					dialogBoxGraph.OrderDetails.Current = OrderDetails.Current;
+					Save.Press();
 
 					throw new PXPopupRedirectException(dialogBoxGraph, "Receive Shop Order");
 				}
@@ -75,6 +83,10 @@ namespace PX.Objects.IB
 				Actions.PressSave();
 			}
 		}
+		#endregion
+		
+		#region WorlflowEventHandler
+		public PXWorkflowEventHandler<nisyProductionOrder, NisyReceiveStock> OnSaveReceiveStock;
 		#endregion
 
 		#region Events

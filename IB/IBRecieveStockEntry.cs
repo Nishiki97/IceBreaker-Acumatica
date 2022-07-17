@@ -46,7 +46,14 @@ namespace PX.Objects.IB
 					Inventory.Cache.Persist(PXDBOperation.Update);
 					break;
 			}
+		}
+		
+		protected virtual void _(Events.RowPersisted<NisyReceiveStock> e)
+		{
+			OrderDetails.Current.ProductionOrderStatus = ProductionOrderStatuses.Closed;
 			OrderDetails.UpdateCurrent();
+			
+			NisyReceiveStock.Events.Select(ev => ev.SaveDocument).FireOn(this, e.Row);
 		}
 		#endregion
 	}
