@@ -127,19 +127,4 @@ namespace PX.Objects.IB.DAC
 		public abstract class noteID : PX.Data.BQL.BqlGuid.Field<noteID> { }
 		#endregion
 	}
-
-	[PXCacheName("BOM details")]
-	public class NisyBOMPart : NisyPart
-	{
-		#region Partcd
-		[PXDBString(50, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa", IsKey = true)]
-		[PXDefault]
-		[PXUIField(DisplayName = "Part Code")]
-		[PXSelector(typeof(Search<partCD, Where<partType.IsEqual<Manufactured>>>),
-		typeof(partCD),
-		typeof(partDescription))]
-		public new virtual string PartCD { get; set; }
-		public new abstract class partCD : PX.Data.BQL.BqlString.Field<partCD> { }
-		#endregion
-	}
 }
