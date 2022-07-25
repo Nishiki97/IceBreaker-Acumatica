@@ -14,7 +14,7 @@
 	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="PartDetails" Width="100%" Height="" AllowAutoHide="false">
 		<Template>
 			<px:PXLayoutRule ControlSize="M" LabelsWidth="M" ID="PXLayoutRule1" runat="server" StartRow="True"></px:PXLayoutRule>
-			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="Partcd" CommitChanges="True"  ></px:PXSelector>
+			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="PartCD" CommitChanges="True"  ></px:PXSelector>
 			<px:PXTextEdit runat="server" ID="CstPXNumberEdit2" DataField="PartDescription" CommitChanges="True" ></px:PXTextEdit></Template>
 	</px:PXFormView>
 </asp:Content>
@@ -30,9 +30,6 @@
 									<px:PXGridColumn CommitChanges="True" DataField="PartID" Width="70" ></px:PXGridColumn>
 									<px:PXGridColumn CommitChanges="True" DataField="Qty" Width="280"></px:PXGridColumn>
 								</Columns>
-								<%--<RowTemplate>
-									<px:PXSegmentMask runat="server" ID="CstPXSegmentMask6" DataField="InventoryID" AutoRefresh="True" ></px:PXSegmentMask>
-								</RowTemplate>--%>
 							</px:PXGridLevel>
 						</Levels>
 						<AutoSize Enabled="True" ></AutoSize>

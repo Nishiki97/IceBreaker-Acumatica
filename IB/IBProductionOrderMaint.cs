@@ -17,8 +17,8 @@ namespace PX.Objects.IB
 		public SelectFrom<NisyInventory>.View Inventory;
 
 		public SelectFrom<NisyProductStructure>
-		.Where<NisyProductStructure.productID
-		.IsEqual<NisyProductionOrder.productNumber.FromCurrent>>.View BOMDetails;
+			.Where<NisyProductStructure.productID
+			.IsEqual<NisyProductionOrder.productNumber.FromCurrent>>.View BOMDetails;
 
 		public PXSetup<NisySetup> NumberingSeqSetup;
 		#endregion
@@ -31,14 +31,14 @@ namespace PX.Objects.IB
 		#endregion
 
 		#region Actions
-		public PXAction<nisyProductionOrder> Release;
+		public PXAction<NisyProductionOrder> Release;
 		[PXButton]
 		[PXUIField(DisplayName = "Release")]
 		protected virtual IEnumerable release(PXAdapter adapter) => adapter.Get();
-		
+
 		public PXAction<NisyProductionOrder> IssueMaterial;
-		[PXButton()]
-		[PXUIField(DisplayName = "Issue Material", Enabled = true)]
+		[PXButton]
+		[PXUIField(DisplayName = "Issue Material")]
 		protected virtual IEnumerable issueMaterial(PXAdapter adapter)
 		{
 			var bomItems = BOMDetails.Select();
@@ -49,44 +49,40 @@ namespace PX.Objects.IB
 				productionordermaint.ReduceStock(bomItems);
 			});
 
-			Save.Press();
 			return adapter.Get();
 		}
 
 		public PXAction<NisyProductionOrder> ReceiveShopOrder;
 		[PXButton(OnClosingPopup = PXSpecialButtonType.Refresh, ClosePopup = true)]
-		[PXUIField(DisplayName = "Receive Shop Order", Enabled = true)]
+		[PXUIField(DisplayName = "Receive Shop Order")]
 		protected virtual void receiveShopOrder()
 		{
-			try
+			if (OrderDetails.Current != null)
 			{
-				if (OrderDetails.Current != null)
-				{
-					var dialogBoxGraph = CreateInstance<IBRecieveStockEntry>();
+				var dialogBoxGraph = CreateInstance<IBRecieveStockEntry>();
 
-					dialogBoxGraph.ReceiveShopOrderDetails.Cache.Clear();
-					dialogBoxGraph.ReceiveShopOrderDetails.Current = SelectFrom<NisyReceiveStock>.View.Select(dialogBoxGraph);
-					dialogBoxGraph.ReceiveShopOrderDetails.Current.Qty = OrderDetails.Current.LotSize;
-					dialogBoxGraph.ReceiveShopOrderDetails.Current.PartID = OrderDetails.Current.ProductNumber;
-					dialogBoxGraph.ReceiveShopOrderDetails.Current.WarehouseID = null;
-					dialogBoxGraph.ReceiveShopOrderDetails.Current.LocationID = null;
-					dialogBoxGraph.ReceiveShopOrderDetails.UpdateCurrent();
-					
-					dialogBoxGraph.OrderDetails.Current = OrderDetails.Current;
-					Save.Press();
+				dialogBoxGraph.ReceiveShopOrderDetails.Cache.Clear();
+				dialogBoxGraph.ReceiveShopOrderDetails.Current = SelectFrom<NisyReceiveStock>.View.Select(dialogBoxGraph);
+				dialogBoxGraph.ReceiveShopOrderDetails.Current.Qty = OrderDetails.Current.LotSize;
+				dialogBoxGraph.ReceiveShopOrderDetails.Current.PartID = OrderDetails.Current.ProductNumber;
+				dialogBoxGraph.ReceiveShopOrderDetails.Current.WarehouseID = null;
+				dialogBoxGraph.ReceiveShopOrderDetails.Current.LocationID = null;
 
-					throw new PXPopupRedirectException(dialogBoxGraph, "Receive Shop Order");
-				}
+				dialogBoxGraph.ReceiveShopOrderDetails.UpdateCurrent();
+
+				dialogBoxGraph.Inventory.Current = Inventory.Current;
+
+				dialogBoxGraph.OrderDetails.Current = OrderDetails.Current;
+				Save.Press();
+
+				throw new PXPopupRedirectException(dialogBoxGraph, "Receive Shop Order");
 			}
-			finally
-			{
-				Actions.PressSave();
-			}
+
 		}
 		#endregion
-		
+
 		#region WorlflowEventHandler
-		public PXWorkflowEventHandler<nisyProductionOrder, NisyReceiveStock> OnSaveReceiveStock;
+		public PXWorkflowEventHandler<NisyProductionOrder, NisyReceiveStock> OnSaveReceiveStock;
 		#endregion
 
 		#region Events
@@ -95,41 +91,57 @@ namespace PX.Objects.IB
 			foreach (NisyProductStructure item in BOMDetails.Select())
 			{
 				NisyProductStructure copy = (NisyProductStructure)BOMDetails.Cache.CreateCopy(item);
-				object TotalQuantity = e.Row.LotSize * copy.Qty;
+				object totalQuantity = e.Row.LotSize * copy.Qty;
 
-				BOMDetails.Cache.RaiseFieldUpdating<NisyProductStructure.totalQty>(copy, ref TotalQuantity);
+				BOMDetails.Cache.RaiseFieldUpdating<NisyProductStructure.totalQty>(copy, ref totalQuantity);
 
-				copy.TotalQty = (int)TotalQuantity;
+				copy.TotalQty = (int)totalQuantity;
 				BOMDetails.Update(copy);
 			}
+
 			SetQuantityAvailability();
 		}
+
 		protected virtual void _(Events.FieldUpdated<NisyProductStructure, NisyProductStructure.totalQty> e)
 		{
 			NisyInventoryAllocation inventoryitem = PXSelect<NisyInventoryAllocation,
-				Where<NisyInventoryAllocation.partid, Equal<Required<NisyProductStructure.partID
+				Where<NisyInventoryAllocation.partID, Equal<Required<NisyProductStructure.partID
 					>>>>.Select(this, e.Row.PartID);
 
 			if (e.Row.TotalQty > inventoryitem.QtyInHand)
 			{
-				BOMDetails.Cache.RaiseExceptionHandling("TotalQuantity", e.Row, e.Row.TotalQty, new PXException(Messages.NoSufficientQtyMessage, typeof(NisyProductStructure.qty)));
+				// Acuminator disable once PX1050 HardcodedStringInLocalizationMethod [Justification]
+				BOMDetails.Cache.RaiseExceptionHandling("TotalQuantity", e.Row, e.Row.TotalQty, new PXException("no quantity", typeof(NisyProductStructure.qty)));
 				// Acuminator disable once PX1070 UiPresentationLogicInEventHandlers [Justification]
 				Save.SetEnabled(false);
 			}
 			else if (inventoryitem.QtyInHand == null)
 			{
-				BOMDetails.Cache.RaiseExceptionHandling("TotalQuantity", e.Row, e.Row.TotalQty, new PXException(Messages.NoSufficientQtyMessage));
+				// Acuminator disable once PX1050 HardcodedStringInLocalizationMethod [Justification]
+				BOMDetails.Cache.RaiseExceptionHandling("TotalQuantity", e.Row, e.Row.TotalQty, new PXException("no quantity in hand"));
 			}
 		}
+
 		protected virtual void _(Events.RowSelected<NisyProductionOrder> e)
 		{
 			NisyProductionOrder row = e.Row;
 
-			if (row.ProductionOrderStatus.Trim() == ProductionOrderStatuses.Reserved || row.ProductionOrderStatus.Trim() == ProductionOrderStatuses.Closed)
+			if (row.ProductionOrderStatus.Trim() == ProductionOrderStatuses.Released)
+			{
+				Save.SetEnabled(false);
+			}
+			if (row.ProductionOrderStatus.Trim() == ProductionOrderStatuses.Reserved)
 			{
 				Delete.SetEnabled(false);
+				Save.SetEnabled(false);
+			}
+			if (row.ProductionOrderStatus.Trim() == ProductionOrderStatuses.Closed || OrderDetails.Current.ProductionOrderStatus == ProductionOrderStatuses.Closed)
+			{
+				Delete.SetEnabled(false);
+				Save.SetEnabled(false);
 			}
 		}
+
 		protected virtual void _(Events.RowSelected<NisyProductStructure> e)
 		{
 			NisyProductionOrder copy = OrderDetails.Current;
@@ -152,18 +164,17 @@ namespace PX.Objects.IB
 		}
 		#endregion
 
-		#region Methods
 		public void ReduceStock(PXResultset<NisyProductStructure> productStructure)
 		{
 			foreach (NisyProductStructure bomitem in productStructure)
 			{
 				NisyInventoryAllocation inventoryitem = PXSelect<NisyInventoryAllocation,
-				Where<NisyInventoryAllocation.partid, Equal<Required<NisyProductStructure.partID
-					>>>>.Select(this, bomitem.PartID); // results the row which has the summarized amount for the part in the product structure selected
+					Where<NisyInventoryAllocation.partID, Equal<Required<NisyProductStructure.partID
+						>>>>.Select(this, bomitem.PartID);
 
 				PXResultset<NisyInventory> locations = PXSelect<NisyInventory,
-				Where<NisyInventory.partid, Equal<Required<NisyProductStructure.partID>>>, OrderBy<Desc<NisyInventory.qty>>
-				>.Select(this, bomitem.PartID);
+					Where<NisyInventory.partID, Equal<Required<NisyProductStructure.partID>>>, OrderBy<Desc<NisyInventory.qty>>
+					>.Select(this, bomitem.PartID);
 
 				foreach (NisyInventory location in locations)
 				{
@@ -205,20 +216,20 @@ namespace PX.Objects.IB
 				}
 			}
 		}
+
 		public void SetQuantityAvailability()
 		{
 			var result = new SelectFrom<NisyProductStructure>
-								.InnerJoin<NisyInventory>.On<NisyInventory.partid.IsEqual<NisyProductStructure.partID>>
-								.Where<NisyProductStructure.productID.IsEqual<NisyProductionOrder.productNumber.FromCurrent>>
-								.AggregateTo<GroupBy<NisyInventory.partid>, Sum<NisyInventory.qty>>
-								.View.ReadOnly(this).Select()
-								.ToDictionary(e => e.GetItem<NisyInventory>().PartID, e => e.GetItem<NisyInventory>().Qty);
+							.InnerJoin<NisyInventory>.On<NisyInventory.partID.IsEqual<NisyProductStructure.partID>>
+							.Where<NisyProductStructure.productID.IsEqual<NisyProductionOrder.productNumber.FromCurrent>>
+							.AggregateTo<GroupBy<NisyInventory.partID>, Sum<NisyInventory.qty>>
+							.View.ReadOnly(this).Select()
+							.ToDictionary(e => e.GetItem<NisyInventory>().PartID, e => e.GetItem<NisyInventory>().Qty);
 
 			foreach (NisyProductStructure item in BOMDetails.Select())
 			{
 				item.Available = item.TotalQty <= result[item.PartID];
 			}
 		}
-		#endregion
 	}
 }

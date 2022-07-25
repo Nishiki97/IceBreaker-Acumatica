@@ -28,12 +28,12 @@ namespace PX.Objects.IB.DAC
 
 		#region CustomerID
 		[PXDBInt(IsKey = true)]
-		[PXDefault(typeof(NisyCustomer.customername))]
+		[PXDefault(typeof(NisyCustomer.customerName))]
 		[PXUIField(DisplayName = "Customer Name")]
-		[PXSelector(typeof(Search<NisyCustomer.customerid>),
-		typeof(NisyCustomer.customerid),
-		typeof(NisyCustomer.customername),
-		SubstituteKey = typeof(NisyCustomer.customername))]
+		[PXSelector(typeof(Search<NisyCustomer.customerID>),
+		typeof(NisyCustomer.customerID),
+		typeof(NisyCustomer.customerName),
+		SubstituteKey = typeof(NisyCustomer.customerName))]
 		public virtual int? CustomerID { get; set; }
 		public abstract class customerID : PX.Data.BQL.BqlInt.Field<customerID> { }
 		#endregion

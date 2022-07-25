@@ -17,8 +17,7 @@
 	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="CustomerOrders" Width="100%" Height="" AllowAutoHide="false">
 		<Template>
 			<px:PXLayoutRule ControlSize="M" LabelsWidth="M" ID="PXLayoutRule1" runat="server" StartRow="True"></px:PXLayoutRule>
-			<%--<px:PXSelector runat="server" ID="Selector1" DataField="CustomerOrderNbr" CommitChanges="true" ></px:PXSelector>--%>
-            <px:PXTextEdit runat="server" ID="PXTextEdit1" DataField="CustomerOrderNbr" CommitChanges="true" ></px:PXTextEdit>
+			<px:PXTextEdit runat="server" ID="PXTextEdit1" DataField="CustomerOrderNbr" CommitChanges="true" ></px:PXTextEdit>
 			<px:PXDateTimeEdit runat="server" ID="PXDateTimeEdit1" DataField="OrderDate" ></px:PXDateTimeEdit>
 			<px:PXSelector runat="server" ID="PXSelector2" DataField="CustomerID" CommitChanges="true"></px:PXSelector>
 			<px:PXTextEdit runat="server" ID="PXTextEdit2" DataField="CustomerAddress" ></px:PXTextEdit>

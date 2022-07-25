@@ -27,7 +27,7 @@ namespace PX.Objects.IB.Descriptor
 		public const string Reserved = "Reserved";
 		public const string Closed = "Closed";
 		public const string Cancelled = "Cancelled";
-		public const string Not_Set = "Not Set";
+		public const string NotSet = "Not Set";
 	}
 
 	public class released : BqlString.Constant<released> { public released() : base(ProductionOrderStatuses.Released) { } }

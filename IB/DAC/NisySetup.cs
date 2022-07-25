@@ -16,7 +16,7 @@ namespace PX.Objects.IB.DAC
 		[PXDBString(10, IsUnicode = true)]
 		[PXUIField(DisplayName = "Product Numbering Sequence")]
 		public virtual string PONumberingID { get; set; }
-		public abstract class ponumberingID : PX.Data.BQL.BqlString.Field<ponumberingID> { }
+		public abstract class pONumberingID : PX.Data.BQL.BqlString.Field<pONumberingID> { }
 		#endregion
 
 		#region SONumberingID

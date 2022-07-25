@@ -11,9 +11,9 @@ namespace PX.Objects.IB
 		public SelectFrom<NisyInventory>.View InvenotrySummaryDetails;
 
 		public SelectFrom<NisyDirectInventoryReceipt>
-			.Where<partid.IsEqual<NisyInventory.partid.FromCurrent>
-			.And<warehouseid.IsEqual<NisyInventory.warehouseid.FromCurrent>>
-			.And<locationid.IsEqual<NisyInventory.locationid.FromCurrent>>>
+			.Where<partID.IsEqual<NisyInventory.partID.FromCurrent>
+			.And<warehouseID.IsEqual<NisyInventory.warehouseID.FromCurrent>>
+			.And<locationID.IsEqual<NisyInventory.locationID.FromCurrent>>>
 			.View DirectInvenotryReceiptDetails;
 		#endregion
 	}

@@ -16,43 +16,42 @@ namespace PX.Objects.IB
 	{
 		#region PartID
 		[PXInt]
-		[PXSelector(typeof(Search<NisyPart.partid>),
-		typeof(NisyPart.partid),
-		typeof(NisyPart.partcd),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		[PXSelector(typeof(Search<NisyPart.partID>),
+		typeof(NisyPart.partID),
+		typeof(NisyPart.partCD),
+		SubstituteKey = typeof(NisyPart.partCD))]
 		[PXUIField(DisplayName = "Part")]
 		public virtual int? PartID { get; set; }
-		public abstract class partid : PX.Data.BQL.BqlInt.Field<partid> { }
+		public abstract class partid : Data.BQL.BqlInt.Field<partid> { }
 		#endregion
 
 		#region WarehouseID
 		[PXInt]
-		[PXSelector(typeof(Search<NisyWarehouse.warehouseid>),
-		typeof(NisyWarehouse.warehousecd),
-		typeof(NisyWarehouse.warehousedescription),
-		SubstituteKey = typeof(NisyWarehouse.warehousecd))]
+		[PXSelector(typeof(Search<NisyWarehouse.warehouseID>),
+		typeof(NisyWarehouse.warehouseCD),
+		typeof(NisyWarehouse.warehouseDescription),
+		SubstituteKey = typeof(NisyWarehouse.warehouseCD))]
 		[PXUIField(DisplayName = "Warehouse")]
 		public virtual int? WarehouseID { get; set; }
-		public abstract class warehouseid : PX.Data.BQL.BqlInt.Field<warehouseid> { }
-
+		public abstract class warehouseid : Data.BQL.BqlInt.Field<warehouseid> { }
 		#endregion
 
 		#region LocationID
 		[PXInt]
-		[PXSelector(typeof(Search<NisyLocation.locationid, Where<NisyLocation.warehouseid, Equal<Current<warehouseid>>>>),
-		typeof(NisyLocation.locationid),
-		typeof(NisyLocation.locationcd),
-		SubstituteKey = typeof(NisyLocation.locationcd))]
+		[PXSelector(typeof(Search<NisyLocation.locationID, Where<NisyLocation.warehouseID, Equal<Current<warehouseid>>>>),
+		typeof(NisyLocation.locationID),
+		typeof(NisyLocation.locationCD),
+		SubstituteKey = typeof(NisyLocation.locationCD))]
 		[PXUIField(DisplayName = "Location")]
 		public virtual int? LocationID { get; set; }
-		public abstract class locationid : PX.Data.BQL.BqlInt.Field<locationid> { }
+		public abstract class locationid : Data.BQL.BqlInt.Field<locationid> { }
 		#endregion
 
 		#region Qty
 		[PXDecimal]
 		[PXUIField(DisplayName = "Quantity", Enabled = false)]
 		public virtual decimal? Qty { get; set; }
-		public abstract class qty : PX.Data.BQL.BqlDecimal.Field<qty> { }
+		public abstract class qty : Data.BQL.BqlDecimal.Field<qty> { }
 		#endregion
 	}
 
@@ -64,21 +63,6 @@ namespace PX.Objects.IB
 		[PXFilterable]
 		public SelectFrom<NisyInventory>.View.ReadOnly INStatusRecords;
 
-		#region Events
-		protected virtual void _(Events.FieldSelecting<NisyInventory.locationid> e)
-		{
-			switch (e.ReturnValue)
-			{
-				case -1:
-					e.ReturnState = PXFieldState.CreateInstance(PXMessages.LocalizeNoPrefix(Messages.TotalFilterable), typeof(string), false, null, null, null, null, null, nameof(NisyInventory.locationid), null, GetLocationDisplayName(), null, PXErrorLevel.Undefined, null, null, null, PXUIVisibility.Undefined, null, null, null);
-					e.Cancel = true;
-					{ }
-					break;
-			}
-		}
-		#endregion
-
-		#region Methods
 		protected virtual IEnumerable iNStatusRecords()
 		{
 			INStatusRecords.Cache.Clear();
@@ -109,33 +93,33 @@ namespace PX.Objects.IB
 		protected virtual IEnumerable FetchINStatusRecord()
 		{
 			var cmd = new SelectFrom<NisyInventory>
-			.InnerJoin<NisyPart>.On<NisyPart.partid.IsEqual<NisyInventory.partid>>
-			.InnerJoin<NisyWarehouse>.On<NisyWarehouse.warehouseid.IsEqual<NisyInventory.warehouseid>>
-			.InnerJoin<NisyLocation>
-			.On<NisyLocation.warehouseid.IsEqual<NisyWarehouse.warehouseid>
-			.And<NisyLocation.locationid.IsEqual<NisyInventory.locationid>>>.View(this);
+				.InnerJoin<NisyPart>.On<NisyPart.partID.IsEqual<NisyInventory.partID>>
+				.InnerJoin<NisyWarehouse>.On<NisyWarehouse.warehouseID.IsEqual<NisyInventory.warehouseID>>
+				.InnerJoin<NisyLocation>
+				.On<NisyLocation.warehouseID.IsEqual<NisyWarehouse.warehouseID>
+				.And<NisyLocation.locationID.IsEqual<NisyInventory.locationID>>>.View(this);
 
 			if (Filter.Current.PartID != null)
 			{
-				cmd.WhereAnd<Where<NisyPart.partid.IsEqual<IBInventoryStockFilter.partid.FromCurrent>>>();
+				cmd.WhereAnd<Where<NisyPart.partID.IsEqual<IBInventoryStockFilter.partid.FromCurrent>>>();
 			}
 
 			if (Filter.Current.WarehouseID != null)
 			{
-				cmd.WhereAnd<Where<NisyWarehouse.warehouseid.IsEqual<IBInventoryStockFilter.warehouseid.FromCurrent>>>();
+				cmd.WhereAnd<Where<NisyWarehouse.warehouseID.IsEqual<IBInventoryStockFilter.warehouseid.FromCurrent>>>();
 
 				if (Filter.Current.LocationID != null)
 				{
-					cmd.WhereAnd<Where<NisyLocation.locationid.IsEqual<IBInventoryStockFilter.locationid.FromCurrent>>>();
+					cmd.WhereAnd<Where<NisyLocation.locationID.IsEqual<IBInventoryStockFilter.locationid.FromCurrent>>>();
 				}
 			}
 
 			List<Type> fieldsScope = new List<Type>(new Type[]{
-				typeof(NisyInventory.inventoryid),
+				typeof(NisyInventory.inventoryID),
 				typeof(NisyInventory.qty),
-				typeof(NisyPart.partcd),
-				typeof(NisyWarehouse.warehousecd),
-				typeof(NisyLocation.locationcd)
+				typeof(NisyPart.partCD),
+				typeof(NisyWarehouse.warehouseCD),
+				typeof(NisyLocation.locationCD)
 				});
 
 			var resultSet = new List<(NisyInventory instatus, NisyPart part, NisyWarehouse warehouse, NisyLocation location)>();
@@ -155,9 +139,9 @@ namespace PX.Objects.IB
 			}
 
 			return resultSet
-			.OrderBy(x => x.part.Partcd)
-			.ThenBy(x => x.warehouse.Warehousecd)
-			.ThenBy(x => x.location.Locationcd)
+			.OrderBy(x => x.part.PartCD)
+			.ThenBy(x => x.warehouse.WarehouseCD)
+			.ThenBy(x => x.location.LocationCD)
 			.Select(x => x.instatus);
 		}
 
@@ -174,13 +158,25 @@ namespace PX.Objects.IB
 			return total;
 		}
 
+		protected virtual void _(Events.FieldSelecting<NisyInventory.locationID> e)
+		{
+			switch (e.ReturnValue)
+			{
+				case -1:
+					// Acuminator disable once PX1050 HardcodedStringInLocalizationMethod [Justification]
+					e.ReturnState = PXFieldState.CreateInstance(PXMessages.LocalizeNoPrefix("TOTAL"), typeof(string), false, null, null, null, null, null, nameof(NisyInventory.locationID), null, GetLocationDisplayName(), null, PXErrorLevel.Undefined, null, null, null, PXUIVisibility.Undefined, null, null, null);
+					e.Cancel = true;
+					{ }
+					break;
+			}
+		}
+
 		private string GetLocationDisplayName()
 		{
-			var displayName = PXUIFieldAttribute.GetDisplayName<NisyInventory.locationid>(INStatusRecords.Cache);
+			var displayName = PXUIFieldAttribute.GetDisplayName<NisyInventory.locationID>(INStatusRecords.Cache);
 			if (displayName != null) displayName = PXMessages.LocalizeNoPrefix(displayName);
 
 			return displayName;
 		}
-		#endregion
 	}
 }

@@ -8,7 +8,7 @@ namespace PX.Objects.IB.DAC
 	public class NisyInventory : IBqlTable
 	{
 		#region Keys
-		public class PK : PrimaryKeyOf<NisyInventory>.By<partid, warehouseid, locationid>
+		public class PK : PrimaryKeyOf<NisyInventory>.By<partID, warehouseID, locationID>
 		{
 			public static NisyInventory Find(PXGraph graph, int? partId, int? warehouseid, int? locationId) => FindBy(graph, partId, warehouseid, locationId);
 		}
@@ -16,41 +16,41 @@ namespace PX.Objects.IB.DAC
 
 		#region InventoryID
 		[PXDBIdentity]
-		public virtual int? Inventoryid { get; set; }
-		public abstract class inventoryid : PX.Data.BQL.BqlInt.Field<inventoryid> { }
+		public virtual int? InventoryID { get; set; }
+		public abstract class inventoryID : PX.Data.BQL.BqlInt.Field<inventoryID> { }
 		#endregion
 
 		#region PartID
 		[PXDBInt(IsKey = true)]
-		[PXSelector(typeof(Search<NisyPart.partid>),
-		typeof(NisyPart.partid),
-		typeof(NisyPart.partcd),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		[PXSelector(typeof(Search<NisyPart.partID>),
+		typeof(NisyPart.partID),
+		typeof(NisyPart.partCD),
+		SubstituteKey = typeof(NisyPart.partCD))]
 		[PXUIField(DisplayName = "Part")]
 		public virtual int? PartID { get; set; }
-		public abstract class partid : PX.Data.BQL.BqlInt.Field<partid> { }
+		public abstract class partID : PX.Data.BQL.BqlInt.Field<partID> { }
 		#endregion
 
 		#region WarehouseID
 		[PXDBInt(IsKey = true)]
-		[PXSelector(typeof(Search<NisyWarehouse.warehouseid>),
-		typeof(NisyWarehouse.warehousecd),
-		typeof(NisyWarehouse.warehousedescription),
-		SubstituteKey = typeof(NisyWarehouse.warehousecd))]
+		[PXSelector(typeof(Search<NisyWarehouse.warehouseID>),
+		typeof(NisyWarehouse.warehouseCD),
+		typeof(NisyWarehouse.warehouseDescription),
+		SubstituteKey = typeof(NisyWarehouse.warehouseCD))]
 		[PXUIField(DisplayName = "Warehouse")]
 		public virtual int? WarehouseID { get; set; }
-		public abstract class warehouseid : PX.Data.BQL.BqlInt.Field<warehouseid> { }
+		public abstract class warehouseID : PX.Data.BQL.BqlInt.Field<warehouseID> { }
 		#endregion
 
 		#region LocationID
 		[PXDBInt(IsKey = true)]
-		[PXSelector(typeof(Search<NisyLocation.locationid, Where<NisyLocation.warehouseid, Equal<Current<warehouseid>>>>),
-		typeof(NisyLocation.locationid),
-		typeof(NisyLocation.locationcd),
-		SubstituteKey = typeof(NisyLocation.locationcd))]
+		[PXSelector(typeof(Search<NisyLocation.locationID, Where<NisyLocation.warehouseID, Equal<Current<warehouseID>>>>),
+		typeof(NisyLocation.locationID),
+		typeof(NisyLocation.locationCD),
+		SubstituteKey = typeof(NisyLocation.locationCD))]
 		[PXUIField(DisplayName = "Location")]
 		public virtual int? LocationID { get; set; }
-		public abstract class locationid : PX.Data.BQL.BqlInt.Field<locationid> { }
+		public abstract class locationID : PX.Data.BQL.BqlInt.Field<locationID> { }
 		#endregion
 
 		#region Qty

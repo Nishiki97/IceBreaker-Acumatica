@@ -30,29 +30,27 @@ namespace PX.Objects.IB
 			newinventory.WarehouseID = row.WarehouseID;
 			newinventory.Qty = row.Qty;
 
-			switch (inventory)
+			if (inventory == null)
 			{
-				case null:
-					inventoryitem.QtyInHand += (int)row.Qty;
-					InventoryAllocation.Update(inventoryitem);
-					Inventory.Insert(newinventory);
-					Inventory.Cache.Persist(PXDBOperation.Insert);
-					break;
-				default:
-					inventoryitem.QtyInHand += (int)row.Qty;
-					InventoryAllocation.Update(inventoryitem);
-					inventory.Qty += row.Qty;
-					Inventory.Update(inventory);
-					Inventory.Cache.Persist(PXDBOperation.Update);
-					break;
+				inventoryitem.QtyInHand += (int)row.Qty;
+				InventoryAllocation.Update(inventoryitem);
+				Inventory.Insert(newinventory);
+				Inventory.Cache.Persist(PXDBOperation.Insert);
+			}
+			else
+			{
+				inventoryitem.QtyInHand += (int)row.Qty;
+				InventoryAllocation.Update(inventoryitem);
+				inventory.Qty += row.Qty;
+				Inventory.Update(inventory);
+				Inventory.Cache.Persist(PXDBOperation.Update);
 			}
 		}
-		
+
 		protected virtual void _(Events.RowPersisted<NisyReceiveStock> e)
 		{
 			OrderDetails.Current.ProductionOrderStatus = ProductionOrderStatuses.Closed;
 			OrderDetails.UpdateCurrent();
-			
 			NisyReceiveStock.Events.Select(ev => ev.SaveDocument).FireOn(this, e.Row);
 		}
 		#endregion

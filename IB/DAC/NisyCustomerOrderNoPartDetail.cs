@@ -9,7 +9,7 @@ namespace PX.Objects.IB.DAC
 {
 	[Serializable]
 	[PXCacheName("Customer Order No Part Details")]
-	public class NisyCustomerOrderNoPartDetails : IBqlTable
+	public class NisyCustomerOrderNoPartDetail : IBqlTable
 	{
 		#region CustomerOrderNbr
 		[PXDBString(IsKey = true)]
@@ -22,10 +22,10 @@ namespace PX.Objects.IB.DAC
 		#region NoPartID
 		[PXDBInt(IsKey = true)]
 		[PXDefault]
-		[PXSelector(typeof(Search<NisyPart.partid, Where<NisyPart.itemtype.IsEqual<NonStock>>>),
-		typeof(NisyPart.partcd),
+		[PXSelector(typeof(Search<NisyPart.partID, Where<NisyPart.itemType.IsEqual<NonStock>>>),
+		typeof(NisyPart.partCD),
 		typeof(NisyPart.partDescription),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		SubstituteKey = typeof(NisyPart.partCD))]
 		public virtual int? NoPartID { get; set; }
 		public abstract class noPartID : BqlInt.Field<noPartID> { }
 		#endregion
@@ -33,10 +33,10 @@ namespace PX.Objects.IB.DAC
 		#region PartID
 		[PXDBInt]
 		[PXDefault]
-		[PXSelector(typeof(Search<NisyPart.partid, Where<NisyPart.itemtype.IsEqual<Stock>>>),
-		typeof(NisyPart.partcd),
+		[PXSelector(typeof(Search<NisyPart.partID, Where<NisyPart.itemType.IsEqual<Stock>>>),
+		typeof(NisyPart.partCD),
 		typeof(NisyPart.partDescription),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		SubstituteKey = typeof(NisyPart.partCD))]
 		public virtual int? PartID { get; set; }
 		public abstract class partID : BqlInt.Field<partID> { }
 		#endregion

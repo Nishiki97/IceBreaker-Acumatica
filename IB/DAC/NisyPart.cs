@@ -11,7 +11,7 @@ namespace PX.Objects.IB.DAC
 	public class NisyPart : IBqlTable
 	{
 		#region Keys
-		public class PK : PrimaryKeyOf<NisyPart>.By<partid>
+		public class PK : PrimaryKeyOf<NisyPart>.By<partID>
 		{
 			public static NisyPart Find(PXGraph graph, int? partNo) => FindBy(graph, partNo);
 		}
@@ -19,19 +19,19 @@ namespace PX.Objects.IB.DAC
 
 		#region Partid
 		[PXDBIdentity]
-		public virtual int? Partid { get; set; }
-		public abstract class partid : PX.Data.BQL.BqlInt.Field<partid> { }
+		public virtual int? PartID { get; set; }
+		public abstract class partID : PX.Data.BQL.BqlInt.Field<partID> { }
 		#endregion
 
 		#region Partcd
 		[PXDBString(50, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa", IsKey = true)]
 		[PXDefault]
 		[PXUIField(DisplayName = "Item Code")]
-		[PXSelector(typeof(Search<partcd, Where<partType.IsEqual<Manufactured>>>),
-		typeof(partcd),
+		[PXSelector(typeof(Search<partCD, Where<partType.IsEqual<Manufactured>>>),
+		typeof(partCD),
 		typeof(partDescription))]
-		public virtual string Partcd { get; set; }
-		public abstract class partcd : PX.Data.BQL.BqlString.Field<partcd> { }
+		public virtual string PartCD { get; set; }
+		public abstract class partCD : PX.Data.BQL.BqlString.Field<partCD> { }
 		#endregion
 
 		#region PartDescription
@@ -56,7 +56,7 @@ namespace PX.Objects.IB.DAC
 					Messages.NonStock
 				})]
 		public virtual string ItemType { get; set; }
-		public abstract class itemtype : PX.Data.BQL.BqlString.Field<itemtype> { }
+		public abstract class itemType : PX.Data.BQL.BqlString.Field<itemType> { }
 		#endregion
 
 		#region PartType
@@ -129,17 +129,17 @@ namespace PX.Objects.IB.DAC
 	}
 
 	[PXCacheName("BOM details")]
-	public class nisyBOMPart : NisyPart
+	public class NisyBOMPart : NisyPart
 	{
 		#region Partcd
 		[PXDBString(50, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa", IsKey = true)]
 		[PXDefault]
 		[PXUIField(DisplayName = "Part Code")]
-		[PXSelector(typeof(Search<partcd, Where<partType.IsEqual<Manufactured>>>),
-		typeof(partcd),
+		[PXSelector(typeof(Search<partCD, Where<partType.IsEqual<Manufactured>>>),
+		typeof(partCD),
 		typeof(partDescription))]
-		public new virtual string Partcd { get; set; }
-		public new abstract class partcd : PX.Data.BQL.BqlString.Field<partcd> { }
+		public new virtual string PartCD { get; set; }
+		public new abstract class partCD : PX.Data.BQL.BqlString.Field<partCD> { }
 		#endregion
 	}
 }

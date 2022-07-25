@@ -20,7 +20,7 @@ namespace PX.Objects.IB.DAC
 		[PXDBString(200, IsUnicode = true, InputMask = "", IsKey = true)]
 		[PXUIField(DisplayName = "Order No")]
 		[PXDefault]
-		[AutoNumber(typeof(NisySetup.ponumberingID), typeof(productionOrderDate))]
+		[AutoNumber(typeof(NisySetup.pONumberingID), typeof(productionOrderDate))]
 		[PXSelector(typeof(Search<orderID>),
 		typeof(productionOrderDate),
 		typeof(productionOrderStatus),
@@ -44,16 +44,16 @@ namespace PX.Objects.IB.DAC
 		#endregion
 
 		#region ProductionOrderStatus
-		[PXDBString(50, IsUnicode = true)]
-		[PXUIField(DisplayName = "Order Status")]
-		[PXDefault(Messages.Not_Set)]
+		[PXDBString(2, IsFixed = true)]
+		[PXUIField(DisplayName = "Order Status", Enabled = false)]
+		[PXDefault(ProductionOrderStatuses.NotSet)]
 		[PXStringList(
 				new string[]{
 					ProductionOrderStatuses.Released,
 					ProductionOrderStatuses.Reserved,
 					ProductionOrderStatuses.Closed,
 					ProductionOrderStatuses.Cancelled,
-					ProductionOrderStatuses.Not_Set
+					ProductionOrderStatuses.NotSet
 				},
 				new string[]
 				{
@@ -70,10 +70,10 @@ namespace PX.Objects.IB.DAC
 		#region ProductNumber
 		[PXDBInt]
 		[PXDBDefault]
-		[PXSelector(typeof(Search<NisyPart.partid, Where<NisyPart.partType.IsEqual<Manufactured>>>),
-		typeof(NisyPart.partid),
-		typeof(NisyPart.partcd),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		[PXSelector(typeof(Search<NisyPart.partID, Where<NisyPart.partType.IsEqual<Manufactured>>>),
+		typeof(NisyPart.partID),
+		typeof(NisyPart.partCD),
+		SubstituteKey = typeof(NisyPart.partCD))]
 		[PXUIField(DisplayName = "Product")]
 		public virtual int? ProductNumber { get; set; }
 		public abstract class productNumber : PX.Data.BQL.BqlInt.Field<productNumber> { }

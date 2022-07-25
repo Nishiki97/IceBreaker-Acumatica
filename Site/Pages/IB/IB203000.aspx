@@ -17,7 +17,7 @@
 		<Levels>
 			<px:PXGridLevel DataMember="CustomerDetails">
 			    <Columns>
-				<px:PXGridColumn DataField="Customername" Width="180" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="CustomerName" Width="180" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="Address" Width="280" ></px:PXGridColumn></Columns>
 			</px:PXGridLevel>
 		</Levels>

@@ -40,9 +40,6 @@
 									<px:PXGridColumn CommitChanges="True" DataField="LocationID" Width="70" ></px:PXGridColumn>
 									<px:PXGridColumn CommitChanges="True" DataField="Qty" Width="280" ></px:PXGridColumn>
 								</Columns>
-								<%--<RowTemplate>
-									<px:PXSegmentMask runat="server" ID="CstPXSegmentMask6" DataField="InventoryID" AutoRefresh="True" ></px:PXSegmentMask>
-								</RowTemplate>--%>
 							</px:PXGridLevel>
 						</Levels>
 						<AutoSize Enabled="True" ></AutoSize>

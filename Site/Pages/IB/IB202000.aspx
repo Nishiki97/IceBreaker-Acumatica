@@ -17,8 +17,8 @@
 	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="WarehouseDetails" Width="100%" Height="" AllowAutoHide="false">
 		<Template>
 			<px:PXLayoutRule ControlSize="M" LabelsWidth="M" ID="PXLayoutRule1" runat="server" StartRow="True"></px:PXLayoutRule>
-			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="Warehousecd" ></px:PXSelector>
-			<px:PXTextEdit runat="server" ID="CstPXNumberEdit2" DataField="Warehousedescription" ></px:PXTextEdit></Template>
+			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="WarehouseCD" ></px:PXSelector>
+			<px:PXTextEdit runat="server" ID="CstPXNumberEdit2" DataField="WarehouseDescription" ></px:PXTextEdit></Template>
 	</px:PXFormView>
 </asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">
@@ -30,12 +30,9 @@
 						<Levels>
 							<px:PXGridLevel DataMember="LocationDetails" >
 								<Columns>
-									<px:PXGridColumn CommitChanges="True" DataField="Locationcd" Width="70" ></px:PXGridColumn>
-									<px:PXGridColumn CommitChanges="True" DataField="Locationdescription" Width="280" ></px:PXGridColumn>
+									<px:PXGridColumn CommitChanges="True" DataField="LocationCD" Width="70" ></px:PXGridColumn>
+									<px:PXGridColumn CommitChanges="True" DataField="LocationDescription" Width="280" ></px:PXGridColumn>
 								</Columns>
-								<%--<RowTemplate>
-									<px:PXSegmentMask runat="server" ID="CstPXSegmentMask6" DataField="InventoryID" AutoRefresh="True" ></px:PXSegmentMask>
-								</RowTemplate>--%>
 							</px:PXGridLevel>
 						</Levels>
 						<AutoSize Enabled="True" ></AutoSize>

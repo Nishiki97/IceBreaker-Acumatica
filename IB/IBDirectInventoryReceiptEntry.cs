@@ -14,6 +14,13 @@ namespace PX.Objects.IB
 		public SelectFrom<NisyInventoryAllocation>.View InventoryAllocationDetails;
 		#endregion
 
+		#region Events
+		protected virtual void _(Events.FieldUpdated<NisyDirectInventoryReceipt, NisyDirectInventoryReceipt.warehouseID> e)
+		{
+			e.Cache.SetValue<NisyDirectInventoryReceipt.locationID>(e.Row, null);
+		}
+		#endregion
+
 		#region Actions
 		public PXAction<NisyDirectInventoryReceipt> ReleaseDirectInventoryReceipt;
 		[PXButton]
@@ -27,39 +34,39 @@ namespace PX.Objects.IB
 			newinventorystatus.LocationID = DirectInvenotryReceiptDetails.Current.LocationID;
 
 			NisyInventory check = CheckExistingInventory();
+
 			NisyInventoryAllocation newallocation = new NisyInventoryAllocation();
-			NisyInventoryAllocation checkallocation = CheckExistingallocation();
 
 			newallocation.PartID = DirectInvenotryReceiptDetails.Current.PartID;
 
-			NisyInventory NewqtyInHand = PXSelectGroupBy<NisyInventory,
-			Where<NisyInventory.partid, Equal<Required<NisyDirectInventoryReceipt.partid>>>,
-			Aggregate<GroupBy<NisyInventory.partid, Sum<NisyInventory.qty>>>>.Select(this, DirectInvenotryReceiptDetails.Current.PartID);
+			NisyInventoryAllocation checkallocation = CheckExistingallocation();
 
-			switch (check)
+			NisyInventory NewqtyInHand = PXSelectGroupBy<NisyInventory,
+			Where<NisyInventory.partID, Equal<Required<NisyDirectInventoryReceipt.partID>>>,
+			Aggregate<GroupBy<NisyInventory.partID, Sum<NisyInventory.qty>>>>.Select(this, DirectInvenotryReceiptDetails.Current.PartID);
+
+			if (check == null)
 			{
-				case null:
-					newinventorystatus.Qty = DirectInvenotryReceiptDetails.Current.Qty;
-					InventoryDetails.Insert(newinventorystatus);
-					break;
-				default:
-					newinventorystatus.Qty = check.Qty + DirectInvenotryReceiptDetails.Current.Qty;
-					InventoryDetails.Update(newinventorystatus);
-					break;
+				newinventorystatus.Qty = DirectInvenotryReceiptDetails.Current.Qty;
+				InventoryDetails.Insert(newinventorystatus);
+			}
+			else
+			{
+				newinventorystatus.Qty = check.Qty + DirectInvenotryReceiptDetails.Current.Qty;
+				InventoryDetails.Update(newinventorystatus);
 			}
 
-			switch (checkallocation)
+			if (checkallocation == null)
 			{
-				case null:
-					newallocation.QtyInHand = DirectInvenotryReceiptDetails.Current.Qty;
-					InventoryAllocationDetails.Insert(newallocation);
-					break;
-				default:
-					newallocation.QtyInHand = (int?)(DirectInvenotryReceiptDetails.Current.Qty + NewqtyInHand.Qty);
-					newallocation.AvailableForSale = 0;
-					newallocation.ReservedQty = 0;
-					InventoryAllocationDetails.Update(newallocation);
-					break;
+				newallocation.QtyInHand = DirectInvenotryReceiptDetails.Current.Qty;
+				InventoryAllocationDetails.Insert(newallocation);
+			}
+			else
+			{
+				newallocation.QtyInHand = (int?)(DirectInvenotryReceiptDetails.Current.Qty + NewqtyInHand.Qty);
+				newallocation.AvailableForSale = 0;
+				newallocation.ReservedQty = 0;
+				InventoryAllocationDetails.Update(newallocation);
 			}
 
 			NisyDirectInventoryReceipt current = new NisyDirectInventoryReceipt();
@@ -71,29 +78,29 @@ namespace PX.Objects.IB
 		}
 		#endregion
 
-		#region Events
-		protected virtual void _(Events.RowSelected<NisyDirectInventoryReceipt> e)
-		{
-			NisyDirectInventoryReceipt row = e.Row;
-
-			if (DirectInvenotryReceiptDetails.Current.IsReleased == true) { ReleaseDirectInventoryReceipt.SetEnabled(false); }
-		}
-		protected virtual void _(Events.FieldUpdated<NisyDirectInventoryReceipt, NisyDirectInventoryReceipt.warehouseid> e)
-		{
-			e.Cache.SetValue<NisyDirectInventoryReceipt.locationid>(e.Row, null);
-		}
-		#endregion
-
 		#region Methods
 		private NisyInventory CheckExistingInventory()
 		{
 			NisyInventory newstatus = NisyInventory.PK.Find(this, DirectInvenotryReceiptDetails.Current.PartID, DirectInvenotryReceiptDetails.Current.WarehouseID, DirectInvenotryReceiptDetails.Current.LocationID);
+
 			return newstatus;
 		}
+
 		private NisyInventoryAllocation CheckExistingallocation()
 		{
 			NisyInventoryAllocation newallocation = NisyInventoryAllocation.PK.Find(this, DirectInvenotryReceiptDetails.Current.PartID);
+
 			return newallocation;
+		}
+		#endregion
+
+		#region Events
+		protected virtual void _(Events.RowSelected<NisyDirectInventoryReceipt> e)
+		{
+			if (DirectInvenotryReceiptDetails.Current.IsReleased == true)
+			{
+				ReleaseDirectInventoryReceipt.SetEnabled(false);
+			}
 		}
 		#endregion
 	}

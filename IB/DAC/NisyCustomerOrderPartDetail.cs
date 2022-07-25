@@ -9,7 +9,7 @@ namespace PX.Objects.IB.DAC
 {
 	[Serializable]
 	[PXCacheName("Customer Order Part Details")]
-	public class NisyCustomerOrderPartDetails : IBqlTable
+	public class NisyCustomerOrderPartDetail : IBqlTable
 	{
 		#region CustomerOrderNbr
 		[PXDBString(IsKey = true)]
@@ -21,10 +21,10 @@ namespace PX.Objects.IB.DAC
 
 		#region PartID
 		[PXDBInt(IsKey = true)]
-		[PXSelector(typeof(Search<NisyPart.partid, Where<NisyPart.itemtype.IsEqual<Stock>>>),
-		typeof(NisyPart.partcd),
+		[PXSelector(typeof(Search<NisyPart.partID, Where<NisyPart.itemType.IsEqual<Stock>>>),
+		typeof(NisyPart.partCD),
 		typeof(NisyPart.partDescription),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		SubstituteKey = typeof(NisyPart.partCD))]
 		public virtual int? PartID { get; set; }
 		public abstract class partID : BqlInt.Field<partID> { }
 		#endregion

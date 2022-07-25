@@ -8,7 +8,7 @@ namespace PX.Objects.IB.DAC
 	public class NisyInventoryAllocation : IBqlTable
 	{
 		#region Keys
-		public class PK : PrimaryKeyOf<NisyInventoryAllocation>.By<partid>
+		public class PK : PrimaryKeyOf<NisyInventoryAllocation>.By<partID>
 		{
 			public static NisyInventoryAllocation Find(PXGraph graph, int? partId) => FindBy(graph, partId);
 		}
@@ -17,27 +17,27 @@ namespace PX.Objects.IB.DAC
 		#region InventoryAllocationID
 		[PXDBIdentity]
 		public virtual int? InventoryAllocationID { get; set; }
-		public abstract class inventoryallocationid : PX.Data.BQL.BqlInt.Field<inventoryallocationid> { }
+		public abstract class inventoryAllocationID : PX.Data.BQL.BqlInt.Field<inventoryAllocationID> { }
 		#endregion
 
 		#region PartID
 		[PXDBInt(IsKey = true)]
-		[PXSelector(typeof(Search<NisyPart.partid>),
-		typeof(NisyPart.partid),
-		typeof(NisyPart.partcd),
-		SubstituteKey = typeof(NisyPart.partcd))]
+		[PXSelector(typeof(Search<NisyPart.partID>),
+			typeof(NisyPart.partID),
+			typeof(NisyPart.partCD),
+			SubstituteKey = typeof(NisyPart.partCD))]
 		[PXUIField(DisplayName = "Part")]
 		public virtual int? PartID { get; set; }
-		public abstract class partid : PX.Data.BQL.BqlInt.Field<partid> { }
+		public abstract class partID : PX.Data.BQL.BqlInt.Field<partID> { }
 		#endregion
 
 		#region AvailableForSale
 		[PXDBInt]
 		[PXDefault(0)]
 		[PXUIField(DisplayName = "Available For Sale")]
-		[PXFormula(typeof(Sub<qtyinhand, reservedqty>))]
+		[PXFormula(typeof(Sub<qtyInHand, reservedQty>))]
 		public virtual int? AvailableForSale { get; set; }
-		public abstract class availableforsale : PX.Data.BQL.BqlString.Field<availableforsale> { }
+		public abstract class availableForSale : PX.Data.BQL.BqlString.Field<availableForSale> { }
 		#endregion
 
 		#region ReservedQty
@@ -45,7 +45,7 @@ namespace PX.Objects.IB.DAC
 		[PXDefault(0)]
 		[PXUIField(DisplayName = "Reserved Qty")]
 		public virtual int? ReservedQty { get; set; }
-		public abstract class reservedqty : PX.Data.BQL.BqlString.Field<reservedqty> { }
+		public abstract class reservedQty : PX.Data.BQL.BqlString.Field<reservedQty> { }
 		#endregion
 
 		#region QtyInHand
@@ -53,7 +53,7 @@ namespace PX.Objects.IB.DAC
 		[PXDefault(0)]
 		[PXUIField(DisplayName = "Qty In Hand")]
 		public virtual int? QtyInHand { get; set; }
-		public abstract class qtyinhand : PX.Data.BQL.BqlString.Field<qtyinhand> { }
+		public abstract class qtyInHand : PX.Data.BQL.BqlString.Field<qtyInHand> { }
 		#endregion
 
 		#region CreatedDateTime

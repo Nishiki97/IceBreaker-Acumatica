@@ -16,22 +16,34 @@ namespace PX.Objects.IB
 		{
 			NisyPart row = e.Row;
 
-			if (row != null) { PXUIFieldAttribute.SetVisible<NisyPart.partType>(e.Cache, e.Row, row.ItemType.Equals(ItemTypes.Stock)); }
+			if (row != null)
+			{
+				PXUIFieldAttribute.SetVisible<NisyPart.partType>(e.Cache, e.Row, row.ItemType.Equals("S"));
+			}
 		}
 
 		protected virtual void _(Events.RowPersisting<NisyPart> e)
 		{
 			NisyPart row = e.Row;
 
-			if (row.ItemType == ItemTypes.Stock && row.PartType == null) { e.Cache.RaiseExceptionHandling<NisyPart.partType>(row, row.PartType, new PXException(Messages.NullPartTypeMessage)); }
+			if (row.ItemType == ItemTypes.Stock && row.PartType == null)
+			{
+				e.Cache.RaiseExceptionHandling<NisyPart.partType>(row, row.PartType, new PXException(Messages.NullPartTypeMessage));
+			}
 		}
 
-		protected virtual void _(Events.FieldUpdated<NisyPart, NisyPart.itemtype> e)
+		protected virtual void _(Events.FieldUpdated<NisyPart, NisyPart.itemType> e)
 		{
 			NisyPart row = e.Row;
 
-			if (row.ItemType == ItemTypes.NonStock) { e.Cache.SetValueExt<NisyPart.partType>(row, PartTypes.Service); }
-			else { e.Cache.SetValueExt<NisyPart.partType>(row, null); }
+			if (row.ItemType == ItemTypes.NonStock)
+			{
+				e.Cache.SetValueExt<NisyPart.partType>(row, PartTypes.Service);
+			}
+			else
+			{
+				e.Cache.SetValueExt<NisyPart.partType>(row, null);
+			}
 		}
 		#endregion
 	}

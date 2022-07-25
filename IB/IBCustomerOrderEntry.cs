@@ -11,13 +11,11 @@ namespace PX.Objects.IB
 		public SelectFrom<NisyCustomerOrder>.View CustomerOrders;
 
 		public SelectFrom<NisyCustomerOrderPartDetails>
-			.Where<NisyCustomerOrderPartDetails.customerOrderNbr
-			.IsEqual<NisyCustomerOrder.customerOrderNbr.FromCurrent>>
+			.Where<NisyCustomerOrderPartDetails.customerOrderNbr.IsEqual<NisyCustomerOrder.customerOrderNbr.FromCurrent>>
 			.View CustomerOrderPartDetails;
 
 		public SelectFrom<NisyCustomerOrderNoPartDetails>
-			.Where<NisyCustomerOrderNoPartDetails.customerOrderNbr
-			.IsEqual<NisyCustomerOrder.customerOrderNbr.FromCurrent>>
+			.Where<NisyCustomerOrderNoPartDetails.customerOrderNbr.IsEqual<NisyCustomerOrder.customerOrderNbr.FromCurrent>>
 			.View CustomerOrderNoPartDetails;
 
 		public SelectFrom<NisyInventoryAllocation>.View InventoryAllocation;
@@ -35,7 +33,6 @@ namespace PX.Objects.IB
 		#endregion
 
 		#region Actions
-
 		public PXAction<NisyCustomerOrder> ReleaseOrder;
 		[PXButton]
 		[PXUIField(DisplayName = "Release", Enabled = true)]
@@ -51,12 +48,12 @@ namespace PX.Objects.IB
 		[PXUIField(DisplayName = "Cancel", Enabled = true)]
 		protected virtual void cancelOrder()
 		{
-			if (CheckForNotDelivered() && CustomerOrders.Current.Status.Trim() == CustomerOrderStatus.COReleased || CustomerOrders.Current.Status.Trim() == CustomerOrderStatus.COPlanned)
+			if (CheckForDeliveredStatusOfCustomerOrder() && CustomerOrders.Current.Status.Trim() == CustomerOrderStatus.COReleased || CustomerOrders.Current.Status.Trim() == CustomerOrderStatus.COPlanned)
 			{
 				CustomerOrders.Current.Status = CustomerOrderStatus.COCancelled;
 				CustomerOrders.UpdateCurrent();
 			}
-			ChangeStatusToCancelled();
+			ChangeToCancelledStatusOfCustomerOrder();
 
 			Actions.PressSave();
 		}
@@ -84,6 +81,7 @@ namespace PX.Objects.IB
 				CustomerOrders.Update(row);
 			}
 		}
+
 		protected void _(Events.RowSelected<NisyCustomerOrder> e)
 		{
 			NisyCustomerOrder row = e.Row;
@@ -107,7 +105,7 @@ namespace PX.Objects.IB
 					ReleaseOrder.SetEnabled(false);
 					DeliverOrder.SetEnabled(true);
 				}
-				if (row.Status.Trim() == CustomerOrderStatus.COCancelled || row.Status.Trim() == CustomerOrderStatus.COClosed)
+				if (row.Status.Trim() == CustomerOrderStatus.COCancelled)
 				{
 					ReleaseOrder.SetEnabled(false);
 					CancelOrder.SetEnabled(false);
@@ -115,6 +113,7 @@ namespace PX.Objects.IB
 				}
 			}
 		}
+
 		protected void _(Events.RowSelected<NisyCustomerOrderPartDetails> e)
 		{
 			NisyCustomerOrderPartDetails row = e.Row;
@@ -126,7 +125,7 @@ namespace PX.Objects.IB
 					DeliverOrder.SetEnabled(false);
 					CancelOrder.SetEnabled(false);
 				}
-				if (!CheckForNotDelivered() && row.Status.Trim() != CustomerOrderItemDetailsStatus.COItemRequired)
+				if (!CheckForDeliveredStatusOfCustomerOrder() && row.Status.Trim() != CustomerOrderItemDetailsStatus.COItemRequired)
 				{
 					CustomerOrders.Current.Status = CustomerOrderStatus.COClosed;
 					CustomerOrders.UpdateCurrent();
@@ -135,6 +134,7 @@ namespace PX.Objects.IB
 				}
 			}
 		}
+
 		protected void _(Events.FieldUpdated<NisyCustomerOrderPartDetails, NisyCustomerOrderPartDetails.qty> e)
 		{
 			NisyCustomerOrderPartDetails row = e.Row;
@@ -142,7 +142,7 @@ namespace PX.Objects.IB
 			if (row != null)
 			{
 				NisyInventoryAllocation inventoryitem = PXSelect<NisyInventoryAllocation,
-				Where<NisyInventoryAllocation.partid, Equal<Required<NisyCustomerOrderPartDetails.partID
+				Where<NisyInventoryAllocation.partID, Equal<Required<NisyCustomerOrderPartDetails.partID
 					>>>>.Select(this, row.PartID);
 
 				if (row.Qty > inventoryitem.AvailableForSale)
@@ -153,6 +153,7 @@ namespace PX.Objects.IB
 				}
 			}
 		}
+
 		protected void _(Events.FieldUpdated<NisyCustomerOrderPartDetails, NisyCustomerOrderPartDetails.partID> e)
 		{
 			NisyCustomerOrderPartDetails row = e.Row;
@@ -164,6 +165,7 @@ namespace PX.Objects.IB
 			row.PartDescription = part.PartDescription;
 			row.Price = part.Price;
 		}
+
 		protected void _(Events.FieldUpdated<NisyCustomerOrderNoPartDetails, NisyCustomerOrderNoPartDetails.noPartID> e)
 		{
 			NisyCustomerOrderNoPartDetails row = e.Row;
@@ -175,6 +177,7 @@ namespace PX.Objects.IB
 			row.PartDescription = part.PartDescription;
 			row.Price = part.Price;
 		}
+
 		protected void _(Events.FieldUpdated<NisyCustomerOrder, NisyCustomerOrder.customerID> e)
 		{
 			NisyCustomerOrder row = e.Row;
@@ -193,64 +196,73 @@ namespace PX.Objects.IB
 			foreach (NisyCustomerOrderPartDetails item in CustomerOrderPartDetails.Select())
 			{
 				NisyInventoryAllocation inventoryitem = PXSelect<NisyInventoryAllocation,
-				Where<NisyInventoryAllocation.partid, Equal<Required<NisyCustomerOrderPartDetails.partID
+				Where<NisyInventoryAllocation.partID, Equal<Required<NisyCustomerOrderPartDetails.partID
 					>>>>.Select(this, item.PartID);
 
 				PXResultset<NisyInventory> inventory = PXSelect<NisyInventory,
-				Where<NisyInventory.partid, Equal<Required<NisyCustomerOrderPartDetails.partID>>>, OrderBy<Desc<NisyInventory.qty>>
+				Where<NisyInventory.partID, Equal<Required<NisyCustomerOrderPartDetails.partID>>>, OrderBy<Desc<NisyInventory.qty>>
 				>.Select(this, item.PartID);
 
-				HandleQuantity(item, inventoryitem, inventory);
+				foreach (NisyInventory inventoryRes in inventory)
+				{
+					if ((int)inventoryRes.Qty >= item.Qty)
+					{
+						inventoryitem.AvailableForSale -= (int)item.Qty;
+						inventoryitem.QtyInHand -= (int)item.Qty;
+						inventoryRes.Qty -= item.Qty;
+
+						InventoryAllocation.Update(inventoryitem);
+						Inventory.Update(inventoryRes);
+
+						Actions.PressSave();
+
+						break;
+					}
+					else if ((int)inventoryRes.Qty < item.Qty) //
+					{
+						inventoryRes.Qty -= inventoryRes.Qty;
+						inventoryitem.QtyInHand -= (int)item.Qty;
+						inventoryitem.AvailableForSale -= (int)item.Qty;
+
+						item.Qty = (int)(item.Qty - inventoryRes.Qty);
+
+						InventoryAllocation.Update(inventoryitem);
+						Inventory.Update(inventoryRes);
+						Actions.PressSave();
+
+						if (item.Qty != 0)
+						{
+							continue;
+						}
+						else
+						{
+							break;
+						}
+
+					}
+				}
 
 				item.Status = CustomerOrderItemDetailsStatus.COItemDelivered;
 				CustomerOrderPartDetails.Update(item);
 			}
 			Actions.PressSave();
 		}
-		public void HandleQuantity(NisyCustomerOrderPartDetails item, NisyInventoryAllocation inventoryitem, PXResultset<NisyInventory> inventory)
-		{
-			foreach (NisyInventory inventoryRes in inventory)
-			{
-				if ((int)inventoryRes.Qty >= item.Qty)
-				{
-					inventoryitem.AvailableForSale -= (int)item.Qty;
-					inventoryitem.QtyInHand -= (int)item.Qty;
-					inventoryRes.Qty -= item.Qty;
 
-					InventoryAllocation.Update(inventoryitem);
-					Inventory.Update(inventoryRes);
-					Actions.PressSave();
-
-					break;
-				}
-				else if ((int)inventoryRes.Qty < item.Qty)
-				{
-					inventoryRes.Qty -= inventoryRes.Qty;
-					inventoryitem.QtyInHand -= (int)item.Qty;
-					inventoryitem.AvailableForSale -= (int)item.Qty;
-
-					item.Qty = (int)(item.Qty - inventoryRes.Qty);
-
-					InventoryAllocation.Update(inventoryitem);
-					Inventory.Update(inventoryRes);
-					Actions.PressSave();
-
-					if (item.Qty != 0) { continue; }
-					else { break; }
-				}
-			}
-		}
-		public bool CheckForNotDelivered()
+		public bool CheckForDeliveredStatusOfCustomerOrder()
 		{
 			bool isNotDelivered = false;
 
 			foreach (NisyCustomerOrderPartDetails item in CustomerOrderPartDetails.Select())
 			{
-				if (item.Status != CustomerOrderItemDetailsStatus.COItemDelivered) { return isNotDelivered = true; }
+				if (item.Status != CustomerOrderItemDetailsStatus.COItemDelivered)
+				{
+					return isNotDelivered = true;
+				}
 			}
 			return isNotDelivered;
 		}
-		public void ChangeStatusToCancelled()
+
+		public void ChangeToCancelledStatusOfCustomerOrder()
 		{
 			foreach (NisyCustomerOrderPartDetails item in CustomerOrderPartDetails.Select())
 			{

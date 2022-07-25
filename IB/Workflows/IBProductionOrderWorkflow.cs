@@ -3,8 +3,8 @@ using PX.Data.WorkflowAPI;
 using PX.Objects.Common;
 using PX.Objects.IB.DAC;
 using PX.Objects.IB.Descriptor;
-using static PX.Data.WorkflowAPI.BoundedTo<PX.Objects.IB.IBProductionOrderMaint, PX.Objects.IB.DAC.nisyProductionOrder>;
-using static PX.Objects.IB.DAC.nisyProductionOrder;
+using static PX.Data.WorkflowAPI.BoundedTo<PX.Objects.IB.IBProductionOrderMaint, PX.Objects.IB.DAC.NisyProductionOrder>;
+using static PX.Objects.IB.DAC.NisyProductionOrder;
 
 namespace PX.Objects.IB.Workflows
 {
@@ -15,7 +15,7 @@ namespace PX.Objects.IB.Workflows
 		#region Constants
 		public static class States
 		{
-			public const string NotSet = ProductionOrderStatuses.Not_Set;
+			public const string NotSet = ProductionOrderStatuses.NotSet;
 			public const string Released = ProductionOrderStatuses.Released;
 			public const string Reserved = ProductionOrderStatuses.Reserved;
 			public const string Closed = ProductionOrderStatuses.Closed;
@@ -41,7 +41,7 @@ namespace PX.Objects.IB.Workflows
 
 		public override void Configure(PXScreenConfiguration config)
 		{
-			var context = config.GetScreenConfigurationContext<IBProductionOrderMaint, nisyProductionOrder>();
+			var context = config.GetScreenConfigurationContext<IBProductionOrderMaint, NisyProductionOrder>();
 
 			#region Categories
 			var commonCategories = CommonActionCategories.Get(context);
@@ -54,65 +54,65 @@ namespace PX.Objects.IB.Workflows
 					.StateIdentifierIs<productionOrderStatus>()
 					.AddDefaultFlow(flow =>
 						flow.WithFlowStates(flowStates =>
+						{
+							flowStates.Add<States.notSet>(flowState =>
 							{
-								flowStates.Add<States.notSet>(flowState =>
+								return flowState
+								.IsInitial()
+								.WithActions(actions =>
 								{
-									return flowState
-									.IsInitial()
+									actions.Add(g => g.Release, a => a.IsDuplicatedInToolbar());
+								});
+							});
+							flowStates.Add<States.released>(flowState =>
+							{
+								return flowState
 									.WithActions(actions =>
 									{
-										actions.Add(g => g.Release, a => a.IsDuplicatedInToolbar());
+										actions.Add(g => g.IssueMaterial, a => a.IsDuplicatedInToolbar().WithConnotation(ActionConnotation.Success));
+									})
+									.WithFieldStates(states =>
+									{
+										states.AddField<NisyProductionOrder.orderID>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.productionOrderDate>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.requestedDate>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.productNumber>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.lotSize>(state => state.IsDisabled());
 									});
-								});
-								flowStates.Add<States.released>(flowState =>
-								{
-									return flowState
-										.WithActions(actions =>
-										{
-											actions.Add(g => g.IssueMaterial, a => a.IsDuplicatedInToolbar().WithConnotation(ActionConnotation.Success));
-										})
-										.WithFieldStates(states =>
-										{
-											states.AddField<nisyProductionOrder.orderID>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.productionOrderDate>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.requestedDate>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.productNumber>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.lotSize>(state => state.IsDisabled());
-										});
-								});
-								flowStates.Add<States.reserved>(flowState =>
-								{
-									return flowState
-										.WithActions(actions =>
-										{
-											actions.Add(g => g.ReceiveShopOrder, a => a.IsDuplicatedInToolbar().WithConnotation(ActionConnotation.Success));
-										})
-										.WithEventHandlers(handlers =>
-										{
-											handlers.Add(g => g.OnSaveReceiveStock);
-										})
-										.WithFieldStates(states =>
-										{
-											states.AddField<nisyProductionOrder.orderID>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.productionOrderDate>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.requestedDate>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.productNumber>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.lotSize>(state => state.IsDisabled());
-										});
-								});
-								flowStates.Add<States.closed>(flowState =>
-								{
-									return flowState
-										.WithFieldStates(states =>
-										{
-											states.AddField<nisyProductionOrder.orderID>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.productionOrderDate>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.requestedDate>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.productNumber>(state => state.IsDisabled());
-											states.AddField<nisyProductionOrder.lotSize>(state => state.IsDisabled());
-										});
-								});
-							})
+							});
+							flowStates.Add<States.reserved>(flowState =>
+							{
+								return flowState
+									.WithActions(actions =>
+									{
+										actions.Add(g => g.ReceiveShopOrder, a => a.IsDuplicatedInToolbar().WithConnotation(ActionConnotation.Success));
+									})
+									.WithEventHandlers(handlers =>
+									{
+										handlers.Add(g => g.OnSaveReceiveStock);
+									})
+									.WithFieldStates(states =>
+									{
+										states.AddField<NisyProductionOrder.orderID>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.productionOrderDate>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.requestedDate>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.productNumber>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.lotSize>(state => state.IsDisabled());
+									});
+							});
+							flowStates.Add<States.closed>(flowState =>
+							{
+								return flowState
+									.WithFieldStates(states =>
+									{
+										states.AddField<NisyProductionOrder.orderID>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.productionOrderDate>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.requestedDate>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.productNumber>(state => state.IsDisabled());
+										states.AddField<NisyProductionOrder.lotSize>(state => state.IsDisabled());
+									});
+							});
+						})
 							.WithTransitions(transitions =>
 							{
 								transitions.Add(t => t.From<States.notSet>().To<States.released>().IsTriggeredOn(g => g.Release));
@@ -126,7 +126,7 @@ namespace PX.Objects.IB.Workflows
 						.WithTargetOf<NisyReceiveStock>()
 						.OfEntityEvent<NisyReceiveStock.Events>(e => e.SaveDocument)
 						.Is(g => g.OnSaveReceiveStock)
-						.UsesPrimaryEntityGetter<SelectFrom<nisyProductionOrder>.Where<productNumber.IsEqual<NisyReceiveStock.partid.FromCurrent>>>());
+						.UsesPrimaryEntityGetter<SelectFrom<NisyProductionOrder>.Where<productNumber.IsEqual<NisyReceiveStock.partID.FromCurrent>>>());
 					})
 					.WithCategories(categories =>
 					{

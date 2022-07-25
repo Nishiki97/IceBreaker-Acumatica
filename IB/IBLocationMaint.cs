@@ -9,9 +9,9 @@ namespace PX.Objects.IB
 		#region Views
 		public SelectFrom<NisyWarehouse>.View WarehouseDetails;
 
-		public SelectFrom<NisyLocation>.
-			Where<NisyLocation.warehouseid.
-				IsEqual<NisyWarehouse.warehouseid.FromCurrent>>.View LocationDetails;
+		public SelectFrom<NisyLocation>
+			.Where<NisyLocation.warehouseID
+			.IsEqual<NisyWarehouse.warehouseID.FromCurrent>>.View LocationDetails;
 		#endregion
 	}
 }

@@ -11,7 +11,7 @@ namespace PX.Objects.IB
 
 		public SelectFrom<NisyProductStructure>
 			.Where<NisyProductStructure.productID
-				.IsEqual<NisyPart.partid.FromCurrent>>.View ProductStructureDetails;
+			.IsEqual<NisyPart.partID.FromCurrent>>.View ProductStructureDetails;
 		#endregion
 	}
 }

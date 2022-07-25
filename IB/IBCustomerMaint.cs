@@ -6,11 +6,11 @@ namespace PX.Objects.IB
 {
 	public class IBCustomerMaint : PXGraph<IBCustomerMaint>
 	{
-		public PXSave<NisyCustomer> Save;
-		public PXCancel<NisyCustomer> Cancel;
-
 		#region Views
 		public SelectFrom<NisyCustomer>.View CustomerDetails;
 		#endregion
+
+		public PXSave<NisyCustomer> Save;
+		public PXCancel<NisyCustomer> Cancel;
 	}
 }

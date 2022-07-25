@@ -10,31 +10,31 @@ namespace PX.Objects.IB.DAC
 	{
 		#region LocationID
 		[PXDBIdentity]
-		public virtual int? Locationid { get; set; }
-		public abstract class locationid : PX.Data.BQL.BqlInt.Field<locationid> { }
+		public virtual int? LocationID { get; set; }
+		public abstract class locationID : PX.Data.BQL.BqlInt.Field<locationID> { }
 		#endregion
 
 		#region WarehouseID
 		[PXDBInt(IsKey = true)]
-		[PXDBDefault(typeof(NisyWarehouse.warehouseid))]
-		[PXParent(typeof(SelectFrom<NisyWarehouse>.Where<NisyWarehouse.warehouseid.IsEqual<warehouseid.FromCurrent>>))]
-		public virtual int? Warehouseid { get; set; }
-		public abstract class warehouseid : PX.Data.BQL.BqlInt.Field<warehouseid> { }
+		[PXDBDefault(typeof(NisyWarehouse.warehouseID))]
+		[PXParent(typeof(SelectFrom<NisyWarehouse>.Where<NisyWarehouse.warehouseID.IsEqual<warehouseID.FromCurrent>>))]
+		public virtual int? WarehouseID { get; set; }
+		public abstract class warehouseID : PX.Data.BQL.BqlInt.Field<warehouseID> { }
 		#endregion
 
 		#region LocationCD
 		[PXDBString(50, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa", IsKey = true)]
 		[PXDefault]
 		[PXUIField(DisplayName = "Location Name")]
-		public virtual string Locationcd { get; set; }
-		public abstract class locationcd : PX.Data.BQL.BqlString.Field<locationcd> { }
+		public virtual string LocationCD { get; set; }
+		public abstract class locationCD : PX.Data.BQL.BqlString.Field<locationCD> { }
 		#endregion
 
 		#region LocationDescription
 		[PXDBString(50, IsUnicode = true, InputMask = "")]
 		[PXUIField(DisplayName = "Description")]
-		public virtual string Locationdescription { get; set; }
-		public abstract class locationdescription : PX.Data.BQL.BqlString.Field<locationdescription> { }
+		public virtual string LocationDescription { get; set; }
+		public abstract class locationDescription : PX.Data.BQL.BqlString.Field<locationDescription> { }
 		#endregion
 
 		#region CreatedDateTime

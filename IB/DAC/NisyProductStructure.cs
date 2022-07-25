@@ -17,8 +17,8 @@ namespace PX.Objects.IB.DAC
 
 		#region ProductID
 		[PXDBInt(IsKey = true)]
-		[PXDBDefault(typeof(NisyPart.partid))]
-		[PXParent(typeof(SelectFrom<NisyPart>.Where<NisyPart.partid.IsEqual<productID.FromCurrent>>))]
+		[PXDBDefault(typeof(NisyPart.partID))]
+		[PXParent(typeof(SelectFrom<NisyPart>.Where<NisyPart.partID.IsEqual<productID.FromCurrent>>))]
 		public virtual int? ProductID { get; set; }
 		public abstract class productID : PX.Data.BQL.BqlInt.Field<productID> { }
 		#endregion
@@ -27,9 +27,9 @@ namespace PX.Objects.IB.DAC
 		[PXDBInt(IsKey = true)]
 		[PXUIField(DisplayName = "Part Name")]
 		[PXDBDefault]
-		[PXSelector(typeof(Search<NisyPart.partid, Where<NisyPart.partType.IsEqual<Purchased>>>),
-		typeof(NisyPart.partcd),
-		typeof(NisyPart.partDescription), SubstituteKey = typeof(NisyPart.partcd))]
+		[PXSelector(typeof(Search<NisyPart.partID, Where<NisyPart.partType.IsEqual<Purchased>>>),
+		typeof(NisyPart.partCD),
+		typeof(NisyPart.partDescription), SubstituteKey = typeof(NisyPart.partCD))]
 		public virtual int? PartID { get; set; }
 		public abstract class partID : PX.Data.BQL.BqlInt.Field<partID> { }
 		#endregion

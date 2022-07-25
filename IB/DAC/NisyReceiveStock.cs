@@ -12,40 +12,39 @@ namespace PX.Objects.IB.DAC
 			public PXEntityEvent<NisyReceiveStock> SaveDocument;
 		}
 		#endregion
-		
+
 		#region ReceiveStockID
 		[PXDBIdentity(IsKey = true)]
 		public virtual int? ReceiveStockID { get; set; }
 		public abstract class receiveStockID : PX.Data.BQL.BqlInt.Field<receiveStockID> { }
 
 		#endregion
-
 		#region PartID
 		[PXDBInt]
 		public virtual int? PartID { get; set; }
-		public abstract class partid : PX.Data.BQL.BqlInt.Field<partid> { }
+		public abstract class partID : PX.Data.BQL.BqlInt.Field<partID> { }
 		#endregion
 
 		#region WarehouseID
 		[PXDBInt]
-		[PXSelector(typeof(Search<NisyWarehouse.warehouseid>),
-		typeof(NisyWarehouse.warehousecd),
-		typeof(NisyWarehouse.warehousedescription),
-		SubstituteKey = typeof(NisyWarehouse.warehousecd))]
+		[PXSelector(typeof(Search<NisyWarehouse.warehouseID>),
+		typeof(NisyWarehouse.warehouseCD),
+		typeof(NisyWarehouse.warehouseDescription),
+		SubstituteKey = typeof(NisyWarehouse.warehouseCD))]
 		[PXUIField(DisplayName = "Warehouse")]
 		public virtual int? WarehouseID { get; set; }
-		public abstract class warehouseid : PX.Data.BQL.BqlInt.Field<warehouseid> { }
+		public abstract class warehouseID : PX.Data.BQL.BqlInt.Field<warehouseID> { }
 		#endregion
 
 		#region LocationID
 		[PXDBInt]
-		[PXSelector(typeof(Search<NisyLocation.locationid, Where<NisyLocation.warehouseid, Equal<Current<warehouseid>>>>),
-		typeof(NisyLocation.locationid),
-		typeof(NisyLocation.locationcd),
-		SubstituteKey = typeof(NisyLocation.locationcd))]
+		[PXSelector(typeof(Search<NisyLocation.locationID, Where<NisyLocation.warehouseID, Equal<Current<warehouseID>>>>),
+		typeof(NisyLocation.locationID),
+		typeof(NisyLocation.locationCD),
+		SubstituteKey = typeof(NisyLocation.locationCD))]
 		[PXUIField(DisplayName = "Location")]
 		public virtual int? LocationID { get; set; }
-		public abstract class locationid : PX.Data.BQL.BqlInt.Field<locationid> { }
+		public abstract class locationID : PX.Data.BQL.BqlInt.Field<locationID> { }
 		#endregion
 
 		#region Qty
